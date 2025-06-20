@@ -12,6 +12,7 @@ const Form = () => {
   const [editId, setEditId] = useState(null);
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState(null);
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
     return saved === 'true';
@@ -205,7 +206,31 @@ const Form = () => {
                     </button>
                   </div>
                 </div>
-                <div className={`${darkMode ? "text-gray-300" : "text-gray-700"} text-sm text-justify whitespace-pre-wrap break-words w-full`}>{item.value.description || 'No description'}</div>
+                <div className={`${darkMode ? "text-gray-300" : "text-gray-700"} text-sm text-justify whitespace-pre-wrap break-words w-full`}>
+                  {item.value.description && item.value.description.length > 100 && expanded !== item.id ? (
+                    <>
+                      {item.value.description.slice(0, 100)}...
+                      <button
+                        onClick={() => setExpanded(item.id)}
+                        className={`ml-2 underline text-sm font-medium transition-colors ${darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-800"}`}
+                      >
+                        See more
+                      </button>
+                    </>
+                  ) : item.value.description && expanded === item.id ? (
+                    <>
+                      {item.value.description}
+                      <button
+                        onClick={() => setExpanded(null)}
+                        className={`ml-2 underline text-sm font-medium transition-colors ${darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-800"}`}
+                      >
+                        See less
+                      </button>
+                    </>
+                  ) : (
+                    item.value.description || 'No description'
+                  )}
+                </div>
                 <div className="text-xs italic text-right text-gray-400">
                   {item.value.updatedAt ? `Updated: ${item.value.updatedAt}` : `Created: ${item.value.createdAt}`}
                 </div>
