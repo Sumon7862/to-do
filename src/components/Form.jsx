@@ -8,9 +8,9 @@ import { Pencil, Trash2, CheckCircle, Timer, Star } from 'lucide-react';
 const Form = () => {
   const [task, setTask] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDateInput, setDueDateInput] = useState(""); // Input field value (YYYY-MM-DD)
-  const [dueTimeInput, setDueTimeInput] = useState(""); // Input field value (HH:mm)
-  const [dueDate, setDueDate] = useState(""); // Confirmed dueDate (ISO string)
+  const [dueDateInput, setDueDateInput] = useState("");
+  const [dueTimeInput, setDueTimeInput] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [taskData, setTaskData] = useState([]);
   const [editId, setEditId] = useState(null);
   const [filter, setFilter] = useState("All");
@@ -64,16 +64,15 @@ const Form = () => {
     const interval = setInterval(() => {
       checkDueTasks();
       updateCountdowns();
-    }, 1000); // every second for countdown
+    }, 1000);
 
     checkDueTasks();
 
     return () => clearInterval(interval);
   }, [taskData]);
 
-  const [countdowns, setCountdowns] = useState({}); // {taskId: "00:12:34"}
+  const [countdowns, setCountdowns] = useState({});
 
-  // Update countdowns for all tasks
   const updateCountdowns = () => {
     const now = moment();
     const newCountdowns = {};
@@ -97,7 +96,6 @@ const Form = () => {
     setCountdowns(newCountdowns);
   };
 
-  // Check and notify due tasks once per minute
   const checkDueTasks = () => {
     const now = moment();
     taskData.forEach(taskItem => {
@@ -155,7 +153,7 @@ const Form = () => {
     };
 
     if (dueDate) {
-      taskObj.dueDate = dueDate; // ISO string already
+      taskObj.dueDate = dueDate;
     }
 
     if (editId) {
@@ -218,7 +216,6 @@ const Form = () => {
     });
   };
 
-  // Automatically update dueDate ISO string when dueDateInput or dueTimeInput changes
   useEffect(() => {
     if (!dueDateInput) {
       setDueDate('');
@@ -228,7 +225,6 @@ const Form = () => {
     setDueDate(moment(combinedISO).toISOString());
   }, [dueDateInput, dueTimeInput]);
 
-  // Filter and search tasks
   let filteredTasks = taskData.filter(item => {
     const nameMatch = item.value.todoname.toLowerCase().includes(search.toLowerCase());
     if (filter === 'Completed') return item.value.completed && nameMatch;
@@ -236,7 +232,6 @@ const Form = () => {
     return nameMatch;
   });
 
-  // Overdue check helper
   const isOverdue = (task) => {
     if (!task.dueDate || task.completed) return false;
     return moment(task.dueDate).isBefore(moment());
@@ -245,15 +240,14 @@ const Form = () => {
   return (
     <div className={`${darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen p-4 transition-colors duration-500`}>
       <ToastContainer />
-      <div className={`${darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-300 shadow-lg"} max-w-3xl mx-auto my-10 p-6 sm:p-8 rounded-xl border transition-colors duration-500`}>
+      <div className={`${darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-300 shadow-lg"} max-w-5xl mx-auto my-10 p-6 sm:p-8 rounded-xl border transition-colors duration-500`}>
 
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-500 dark:from-blue-400 dark:to-green-400 flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
+          <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-500 dark:from-blue-400 dark:to-green-400 flex items-center gap-4 flex-wrap">
             To-Do List
-            {/* Countdown timer for editing task only */}
             {editId && countdowns[editId] && (
               <span
-                className={`ml-2 font-mono text-sm px-2 py-1 rounded cursor-default select-none
+                className={`ml-0 sm:ml-2 mt-2 sm:mt-0 font-mono text-sm px-2 py-1 rounded cursor-default select-none
                   ${darkMode
                     ? 'bg-red-700 text-red-300 border border-red-500'
                     : 'bg-red-100 text-red-700 border border-red-300'
@@ -267,7 +261,7 @@ const Form = () => {
           </h1>
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${darkMode ? "bg-yellow-400 text-gray-900 hover:bg-yellow-300" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 whitespace-nowrap ${darkMode ? "bg-yellow-400 text-gray-900 hover:bg-yellow-300" : "bg-gray-800 text-white hover:bg-gray-700"}`}
           >
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
@@ -292,8 +286,8 @@ const Form = () => {
             aria-label="Task description"
           />
 
-          <div className="flex gap-4 items-end">
-            <div className="flex-1">
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
+            <div className="flex-1 w-full">
               <label className="block mb-1 font-semibold" htmlFor="dueDate">Due Date</label>
               <input
                 id="dueDate"
@@ -304,7 +298,7 @@ const Form = () => {
                 aria-label="Due date"
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 w-full">
               <label className="block mb-1 font-semibold" htmlFor="dueTime">Due Time</label>
               <input
                 id="dueTime"
@@ -315,7 +309,6 @@ const Form = () => {
                 aria-label="Due time"
               />
             </div>
-            {/* Removed OK button as requested */}
           </div>
 
           <button
@@ -326,14 +319,13 @@ const Form = () => {
           </button>
         </form>
 
-        <div className={`mt-6 flex justify-between items-center`} role="group" aria-label="Filter tasks">
-          {/* Buttons container aligned left */}
-          <div className="flex space-x-2">
+        <div className={`mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0`} role="group" aria-label="Filter tasks">
+          <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
             {['All', 'Completed', 'Pending'].map(opt => (
               <button
                 key={opt}
                 onClick={() => setFilter(opt)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${filter === opt
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${filter === opt
                     ? 'bg-blue-600 text-white'
                     : darkMode
                       ? 'bg-gray-600 text-white'
@@ -346,7 +338,6 @@ const Form = () => {
             ))}
           </div>
 
-          {/* Search input aligned right */}
           <input
             type="text"
             value={search}
@@ -359,8 +350,6 @@ const Form = () => {
           />
         </div>
 
-
-        {/* Recent 3 Tasks */}
         {filteredTasks.length > 0 && (
           <div className="mt-10">
             <div className="flex items-center gap-2 mb-4">
@@ -373,7 +362,6 @@ const Form = () => {
           </div>
         )}
 
-        {/* Task List */}
         {filteredTasks.length > 0 ? (
           <div className="space-y-4">
             {filteredTasks.map((item) => {
@@ -384,13 +372,13 @@ const Form = () => {
                   className={`${darkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg shadow p-4 space-y-2 transition-all border ${overdue ? 'border-red-500' : 'border-transparent'
                     }`}
                 >
-                  <div className="flex justify-between items-start">
-                    <div className={`text-lg font-medium break-all flex items-center gap-2 ${item.value.completed ? 'line-through text-gray-400' : ''}`}>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+                    <div className={`text-lg font-medium break-all flex flex-wrap items-center gap-2 ${item.value.completed ? 'line-through text-gray-400' : ''}`}>
                       {item.value.priority && <Star size={16} className="text-yellow-400" />}
                       {item.value.todoname}
                       {countdowns[item.id] && !item.value.completed && (
                         <span
-                          className={`ml-2 font-mono text-sm px-2 py-1 rounded cursor-default select-none
+                          className={`ml-0 sm:ml-2 font-mono text-sm px-2 py-1 rounded cursor-default select-none
                             ${darkMode
                               ? 'bg-red-700 text-red-300 border border-red-500'
                               : 'bg-red-100 text-red-700 border border-red-300'
@@ -402,10 +390,10 @@ const Form = () => {
                         </span>
                       )}
                       {overdue && (
-                        <span className="ml-2 text-red-400 font-semibold text-sm italic">(Overdue)</span>
+                        <span className="ml-0 sm:ml-2 text-red-400 font-semibold text-sm italic">(Overdue)</span>
                       )}
                     </div>
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex flex-wrap gap-2 flex-shrink-0 justify-start sm:justify-end w-full sm:w-auto">
                       <button
                         onClick={() => handleToggleComplete(item.id, item.value.completed)}
                         className={`border px-2 py-1 rounded ${item.value.completed ? 'bg-green-500 text-white' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}
@@ -438,40 +426,30 @@ const Form = () => {
                   </div>
 
                   {item.value.description && (
-                    <p
-                      className={`text-sm max-w-prose ${darkMode ? 'text-gray-300' : 'text-gray-600'
-                        }`}
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {expanded === item.id
-                        ? item.value.description
-                        : item.value.description.length > 70
-                          ? item.value.description.slice(0, 70) + '...'
-                          : item.value.description}
-                      {item.value.description.length > 70 && (
+                    <p className={`whitespace-pre-line text-sm ${expanded === item.id ? '' : 'line-clamp-3'} ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {item.value.description}
+                      {item.value.description.length > 100 && (
                         <button
-                          onClick={() =>
-                            setExpanded(expanded === item.id ? null : item.id)
-                          }
-                          className={`ml-2 text-blue-500 underline hover:text-blue-700`}
+                          onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                          className="ml-2 text-blue-500 underline hover:text-blue-700 focus:outline-none"
                           aria-expanded={expanded === item.id}
                         >
-                          {expanded === item.id ? 'See less' : 'See more'}
+                          {expanded === item.id ? "See less" : "See more"}
                         </button>
                       )}
                     </p>
                   )}
 
-                  <div className="text-xs text-gray-400 flex justify-between">
+                  <div className={`text-xs text-gray-400 flex flex-wrap gap-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     <span>Created: {item.value.createdAt || 'N/A'}</span>
-                    <span>Last updated: {item.value.updatedAt || 'N/A'}</span>
+                    <span>Updated: {item.value.updatedAt || 'N/A'}</span>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className="text-center mt-8 text-gray-400">No tasks found.</div>
+          <p className="mt-8 text-center text-gray-500 dark:text-gray-400">No tasks found.</p>
         )}
       </div>
     </div>
