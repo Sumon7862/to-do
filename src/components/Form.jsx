@@ -356,7 +356,7 @@ const Form = () => {
           <div className="mt-10">
             <div className="flex items-center gap-2 mb-4">
               <Timer size={18} className="text-blue-400" />
-              <h2 className="text-lg font-semibold">Recent 3 Tasks</h2>
+              <h2 className={`${darkMode ? 'text-gray-900' : 'text-black'} text-lg font-semibold`}>Recent 3 Tasks</h2>
             </div>
             <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 mb-6">
               {filteredTasks.slice(0, 3).map(t => (
